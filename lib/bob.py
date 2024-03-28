@@ -134,15 +134,18 @@ class Bob:
         model_json = self.model.to_json()
         model_base64 = base64.b64encode(model_json.encode()).decode()
         
-        weights = self.model.get_weights()
-        # TODO persist weights as base64 in the .bob JSON file
+        buffer = io.BytesIO()
+        buffer.name = "weights.h5"
+        self.model.save_weights(buffer)
+        buffer.seek(0)
+        weights_base64 = base64.b64encode(buffer.read()).decode('utf-8')
 
         tokenizer_json = self.tokenizer.to_json()
         tokenizer_base64 = base64.b64encode(tokenizer_json.encode()).decode()
 
         data = {
             "model": model_base64,
-            "weights": base64_weights,
+            "weights": weights_base64,
             "tokenizer": tokenizer_base64,
             "config": self.config
         }
@@ -177,8 +180,10 @@ class Bob:
         model_bytes = base64.decodebytes(model_json)
         self.model = tf.keras.models.load_model(model_bytes)
         
-        # TODO load weights from the base64 string above
-        self.model.load_weights()
+        decoded_weights = base64.b64decode(base64_weights)
+        buffer = io.BytesIO(decoded_weights)
+        buffer.name = "weights.h5"
+        model.load_weights(buffer)
         
         self.config = data["config"]
             
