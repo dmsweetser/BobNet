@@ -131,21 +131,17 @@ class Bob:
         model.fit(input_sequences, output_sequences, epochs=epochs, batch_size=batch_size)
 
     def _save_bob(self, file_path):
-        model_json = self.model.to_json()
-        model_base64 = base64.b64encode(model_json.encode()).decode()
-        
+
         buffer = io.BytesIO()
-        buffer.name = "weights.h5"
-        self.model.save_weights(buffer)
+        self.model.save(buffer)
         buffer.seek(0)
-        weights_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+        model_base64 = base64.b64encode(buffer.read()).decode('utf-8')
 
         tokenizer_json = self.tokenizer.to_json()
         tokenizer_base64 = base64.b64encode(tokenizer_json.encode()).decode()
 
         data = {
             "model": model_base64,
-            "weights": weights_base64,
             "tokenizer": tokenizer_base64,
             "config": self.config
         }
@@ -169,21 +165,15 @@ class Bob:
         data = json.loads(json_data)
 
         model_base64 = data["model"]
-        base64_weights = data["weights"]
         tokenizer_base64 = data["tokenizer"]
 
         tokenizer_json = base64.b64decode(tokenizer_base64.encode()).decode()
         tokenizer_data = json.load(tokenizer_json)
         self.tokenizer = tf.keras.preprocessing.text.Tokenizer.from_json(**tokenizer_data)
-
-        model_json = base64.b64decode(model_base64.encode()).decode()
-        model_bytes = base64.decodebytes(model_json)
-        self.model = tf.keras.models.load_model(model_bytes)
-        
-        decoded_weights = base64.b64decode(base64_weights)
+             
+        decoded_model = base64.b64decode(model_base64)
         buffer = io.BytesIO(decoded_weights)
-        buffer.name = "weights.h5"
-        model.load_weights(buffer)
+        self.model = tf.keras.models.load(buffer.read())
         
         self.config = data["config"]
             
