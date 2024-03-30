@@ -24,25 +24,28 @@ class Bob:
         if existing_model_path != "":
             self._load_bob(existing_model_path)
         elif training_data != "" :
-            self.config = config
             self.end_token = '[e]'
             self.delimiter = '[m]'
             self.model_dir = model_dir
-            self.context_length = config["context_length"]
-            self.embedding_dim = config["embedding_dim"]
-            self.lstm_units = config["lstm_units"]
-            self.hidden_dim = config["hidden_dim"]
-            self.epochs = config["epochs"]
-            self.batch_size = config["batch_size"]
-            self.learning_rate = config["learning_rate"]
-            self.dropout = config["dropout"]
-            self.recurrent_dropout = config["recurrent_dropout"]
-            self.temperature = config["temperature"]
-            self.repetition_penalty = config["repetition_penalty"]        
+            self.populate_from_config(config)
             self.tokenizer = None
             self.model = None
             self._build_bob(training_data)
             self._save_bob(model_dir)
+        
+    def populate_from_config(self, config):
+        self.config = config
+        self.context_length = config["context_length"]
+        self.embedding_dim = config["embedding_dim"]
+        self.lstm_units = config["lstm_units"]
+        self.hidden_dim = config["hidden_dim"]
+        self.epochs = config["epochs"]
+        self.batch_size = config["batch_size"]
+        self.learning_rate = config["learning_rate"]
+        self.dropout = config["dropout"]
+        self.recurrent_dropout = config["recurrent_dropout"]
+        self.temperature = config["temperature"]
+        self.repetition_penalty = config["repetition_penalty"]        
         
     def infer(self, seed_text):
         try:
@@ -70,7 +73,8 @@ class Bob:
             # Get the probability of the selected token
             selected_token_prob = predicted_probs[max_prob_index]
             return result, selected_token_prob
-        except:
+        except Exception as e:
+            print(e)
             return "", 0
         
     def _create_model(self, context_length, vocab_size, embedding_dim, lstm_units, hidden_dim):
@@ -140,7 +144,7 @@ class Bob:
             self.model.save(temp_file.name)
         with open(temp_file_path, 'rb') as temp_file:
             model_base64 = base64.b64encode(temp_file.read()).decode('utf-8')
-
+            
         os.remove(temp_file_path)
 
         tokenizer_json = self.tokenizer.to_json()
@@ -180,11 +184,10 @@ class Bob:
         with open(temp_file_path, 'wb') as temp_file:
             decoded_model = base64.b64decode(model_base64)
             temp_file.write(decoded_model)
-
         self.model = tf.keras.models.load_model(temp_file_path)
         os.remove(temp_file_path)
         
-        self.config = data["config"]
+        self.populate_from_config(data["config"])
             
     def _build_bob(self, input_data):
         text_data_arr = []
