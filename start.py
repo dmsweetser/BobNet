@@ -40,8 +40,8 @@ if __name__ == "__main__":
     
     if len(os.listdir(model_dir)) == 0:
         bob_net.append(Bob(config=config, training_data="What is your name? My name is Bob.", model_dir=model_dir))
-        bob_net.append(Bob(config=config, training_data="What is 2 + 2? 2 + 2 = 4.", model_dir=model_dir))
-        bob_net.append(Bob(config=config, training_data="What is 2 + 4? 2 + 4 = 6.", model_dir=model_dir))
+        # bob_net.append(Bob(config=config, training_data="What is 2 + 2? 2 + 2 = 4.", model_dir=model_dir))
+        # bob_net.append(Bob(config=config, training_data="What is 2 + 4? 2 + 4 = 6.", model_dir=model_dir))
     else:    
         for file in os.listdir(model_dir):
             file_path = os.path.join(model_dir, file)
@@ -69,6 +69,9 @@ if __name__ == "__main__":
         output += " " + matching_result
         
         print(output)
+        
+        if "[e]" in output:
+            break
         
         results = []
         probabilities = []

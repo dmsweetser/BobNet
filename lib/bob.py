@@ -9,11 +9,14 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.preprocessing.text import tokenizer_from_json
+from tensorflow.keras.models import load_model
 import datetime
 import time
 import string
 import base64
 import io
+import tempfile
 
 class Bob:
     def __init__(self, existing_model_path = "", config = "", training_data = "", model_dir=""):
@@ -132,10 +135,13 @@ class Bob:
 
     def _save_bob(self, file_path):
 
-        buffer = io.BytesIO()
-        self.model.save(buffer)
-        buffer.seek(0)
-        model_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+        temp_file_path = tempfile.mktemp(suffix='.keras')
+        with open(temp_file_path, 'wb') as temp_file:
+            self.model.save(temp_file.name)
+        with open(temp_file_path, 'rb') as temp_file:
+            model_base64 = base64.b64encode(temp_file.read()).decode('utf-8')
+
+        os.remove(temp_file_path)
 
         tokenizer_json = self.tokenizer.to_json()
         tokenizer_base64 = base64.b64encode(tokenizer_json.encode()).decode()
@@ -168,12 +174,15 @@ class Bob:
         tokenizer_base64 = data["tokenizer"]
 
         tokenizer_json = base64.b64decode(tokenizer_base64.encode()).decode()
-        tokenizer_data = json.load(tokenizer_json)
-        self.tokenizer = tf.keras.preprocessing.text.Tokenizer.from_json(**tokenizer_data)
+        self.tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(tokenizer_json)
              
-        decoded_model = base64.b64decode(model_base64)
-        buffer = io.BytesIO(decoded_weights)
-        self.model = tf.keras.models.load(buffer.read())
+        temp_file_path = tempfile.mktemp(suffix='.keras')
+        with open(temp_file_path, 'wb') as temp_file:
+            decoded_model = base64.b64decode(model_base64)
+            temp_file.write(decoded_model)
+
+        self.model = tf.keras.models.load_model(temp_file_path)
+        os.remove(temp_file_path)
         
         self.config = data["config"]
             
