@@ -1,15 +1,18 @@
 import sqlite3
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
+from gensim.models import KeyedVectors
 from annoy import AnnoyIndex
 import json
+import nltk
+nltk.download('punkt')
 
 class VectorStore:
-    def __init__(self, index_dim):
-        self.index_dim = index_dim
+    def __init__(self):
+        self.index_dim = 300
         self.db = sqlite3.connect('vector_store.db')
         self.create_table()
-        self.vectorizer = TfidfVectorizer(stop_words='english')
+        # Download from https://github.com/mmihaltz/word2vec-GoogleNews-vectors
+        self.word2vec_model = KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin',  limit=500000, binary=True) 
         self.index = self.init_index()
 
     def create_table(self):
@@ -20,38 +23,49 @@ class VectorStore:
                             raw_text TEXT,
                             model_data BLOB)''')
 
-    def init_index(self):
-        self.index = AnnoyIndex(self.index_dim, 'angular')
-        return self.index
-
     def add_vector(self, raw_text, model_data):
-        vector = self.vectorizer.fit_transform([raw_text]).toarray().astype(np.float32)
-        np_vector = np.asarray(vector, dtype=np.float32)
-        # Ensure consistent length by padding or truncating
-        if len(np_vector[0]) != self.index_dim:
-            np_vector = self._resize_vector(np_vector)
+        # Vectorize the text using Word2Vec
+        words = nltk.word_tokenize(raw_text.lower())  # Tokenize the text
+        vector = np.zeros((self.index_dim,), dtype=np.float32)  # Initialize vector with shape (300,)
+        count = 0
+        for word in words:
+            if word in self.word2vec_model:
+                vector += self.word2vec_model[word]
+                count += 1
+        if count > 0:
+            vector /= count  # Average the word vectors
+        else:
+            return  # Skip if no word vectors found
+
         id = self.index.get_n_items()
-        self.index.add_item(id, np_vector[0])  # Annoy expects 1D array
+        self.index.add_item(id, vector)
         cursor = self.db.cursor()
 
         # Convert model_data to bytes
         model_data_bytes = json.dumps(model_data).encode('utf-8')
 
         cursor.execute('''INSERT INTO vectors (id, vector, raw_text, model_data)
-                        VALUES (?, ?, ?, ?)''', (id, np_vector.tobytes(), raw_text, sqlite3.Binary(model_data_bytes)))
+                        VALUES (?, ?, ?, ?)''', (id, vector.tobytes(), raw_text, sqlite3.Binary(model_data_bytes)))
         self.db.commit()
+        self.index.drop
         self.index.build(10)  # Build the index after adding all items
-
-    def _resize_vector(self, vector):
-        if len(vector[0]) > self.index_dim:
-            return vector[:, :self.index_dim]  # Truncate
-        else:
-            return np.pad(vector, ((0, 0), (0, self.index_dim - len(vector[0]))), mode='constant')  # Pad
 
 
     def search(self, query_text):
-        np_query_vector = self.vectorizer.fit_transform([query_text]).toarray().astype(np.float32)
-        indices = self.index.search(np_query_vector, 10)
+        # Vectorize the query text using Word2Vec
+        words = nltk.word_tokenize(query_text.lower())
+        query_vector = np.zeros(self.index_dim, dtype=np.float32)
+        count = 0
+        for word in words:
+            if word in self.word2vec_model:
+                query_vector += self.word2vec_model[word]
+                count += 1
+        if count > 0:
+            query_vector /= count
+        else:
+            return []
+
+        indices = self.index.get_nns_by_vector(query_vector, 10)
         results = []
         for i in indices:
             cursor = self.db.cursor()

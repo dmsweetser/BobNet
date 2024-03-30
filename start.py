@@ -2,9 +2,11 @@ import sys
 import os
 import argparse
 from lib.bob import *
+import shutil
 from lib.vector_store import VectorStore
 
 ingest_dir = "ingest"
+ingest_archive_dir = "ingest\\archive\\"
 import_dir = "import"
 share_dir = "share"
 
@@ -22,16 +24,19 @@ config = {
     "repetition_penalty": 1.0
 }
 
-vector_store = VectorStore(64)
+vector_store = VectorStore()
 
 if __name__ == "__main__":
     
     os.makedirs(ingest_dir, exist_ok=True)
+    os.makedirs(ingest_archive_dir, exist_ok=True)
     os.makedirs(import_dir, exist_ok=True)
     os.makedirs(share_dir, exist_ok=True)
     
     if len(os.listdir(ingest_dir)) > 0:
         for file in os.listdir(ingest_dir):
+            if "archive" in file:
+                continue
             full_file_path = os.path.join(ingest_dir, file)
             with open(full_file_path, 'r') as ingest_file:
                 training_text = ingest_file.read()
@@ -45,10 +50,11 @@ if __name__ == "__main__":
                 full_path = os.path.join(share_dir, file_name)
                 with open(full_path, "w") as share_file:
                     share_file.write(json.dumps(new_bob.save_bob(), indent=4))
+            shutil.move(full_file_path, os.path.join(ingest_archive_dir,file))
         
     if len(os.listdir(import_dir)) > 0:
         for file in os.listdir(import_dir):
-            if '.bob' not in file.name:
+            if '.bob' not in file:
                 continue
             full_file_path = os.path.join(import_dir, file)
             with open(full_file_path, 'r') as import_file:
@@ -56,6 +62,8 @@ if __name__ == "__main__":
                 vector_store.add_vector(
                     new_bob.training_data,
                     new_bob.save_bob())
+
+    sys.argv.append("What is your name?")
 
     if len(sys.argv) > 1:
         output = sys.argv[1]

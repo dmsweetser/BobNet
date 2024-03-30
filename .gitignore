@@ -1,5 +1,8 @@
 venv/
-models/*.bob
+share/*.bob
 __pycache__/
 *.pyc
 vector_store.db
+*.bin
+ingest/archive/*
+!ingest/archive/README.txt

@@ -1,4 +1,5 @@
 tensorflow
 numpy
 scikit-learn
-annoy
+gensim
+nltk
