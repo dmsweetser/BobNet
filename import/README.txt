@@ -1,0 +1,1 @@
+Add .bob files here to load them into your local vector store

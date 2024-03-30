@@ -22,16 +22,17 @@ class Bob:
     def __init__(self, existing_model_path = "", config = "", training_data = "", model_dir=""):
 
         if existing_model_path != "":
-            self._load_bob(existing_model_path)
+            self.load_bob(existing_model_path)
         elif training_data != "" :
             self.end_token = '[e]'
             self.delimiter = '[m]'
+            self.training_data = training_data
             self.model_dir = model_dir
             self.populate_from_config(config)
             self.tokenizer = None
             self.model = None
             self._build_bob(training_data)
-            self._save_bob(model_dir)
+            self.save_bob(model_dir)
         
     def populate_from_config(self, config):
         self.config = config
@@ -137,7 +138,7 @@ class Bob:
     def _train_model(self, model, input_sequences, output_sequences, epochs, batch_size):
         model.fit(input_sequences, output_sequences, epochs=epochs, batch_size=batch_size)
 
-    def _save_bob(self, file_path):
+    def save_bob(self):
 
         temp_file_path = tempfile.mktemp(suffix='.keras')
         with open(temp_file_path, 'wb') as temp_file:
@@ -150,27 +151,16 @@ class Bob:
         tokenizer_json = self.tokenizer.to_json()
         tokenizer_base64 = base64.b64encode(tokenizer_json.encode()).decode()
 
-        data = {
+        json_data = {
             "model": model_base64,
             "tokenizer": tokenizer_base64,
-            "config": self.config
+            "config": self.config,
+            "training_data": self.training_data
         }
-        
-        current_ticks = int(time.time())
-        file_name = f"{str(current_ticks)}.bob"
-        full_path = os.path.join(self.model_dir, file_name)
 
-        with open(full_path, "w") as file:
-            file.write(json.dumps(data, indent=4))
+        return json_data
 
-    def _load_bob(self, file_path):
-        
-        json_data = ""
-        
-        if os.path.exists(file_path):
-            json_data = open(file_path, "r").read()
-        else:
-            raise ValueError(f"File path {file_path} does not exist")
+    def load_bob(self, json_data):
         
         data = json.loads(json_data)
 
@@ -188,6 +178,7 @@ class Bob:
         os.remove(temp_file_path)
         
         self.populate_from_config(data["config"])
+        self.training_data = data["training_data"]
             
     def _build_bob(self, input_data):
         text_data_arr = []
