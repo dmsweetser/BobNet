@@ -1,7 +1,8 @@
 import sqlite3
 import numpy as np
-from faiss import IndexFlatL2, IndexIVFInt32, FAISS_JDIFF_1000
 from sklearn.feature_extraction.text import TfidfVectorizer
+from annoy import AnnoyIndex
+import json
 
 class VectorStore:
     def __init__(self, index_dim):
@@ -20,30 +21,45 @@ class VectorStore:
                             model_data BLOB)''')
 
     def init_index(self):
-        return IndexFlatL2(self.index_dim)
+        self.index = AnnoyIndex(self.index_dim, 'angular')
+        return self.index
 
     def add_vector(self, raw_text, model_data):
         vector = self.vectorizer.fit_transform([raw_text]).toarray().astype(np.float32)
         np_vector = np.asarray(vector, dtype=np.float32)
-        self.index.add(np_vector)
+        # Ensure consistent length by padding or truncating
+        if len(np_vector[0]) != self.index_dim:
+            np_vector = self._resize_vector(np_vector)
+        id = self.index.get_n_items()
+        self.index.add_item(id, np_vector[0])  # Annoy expects 1D array
         cursor = self.db.cursor()
-        id = cursor.lastrowid
-        self.index.add(np_vector)
+
+        # Convert model_data to bytes
+        model_data_bytes = json.dumps(model_data).encode('utf-8')
+
         cursor.execute('''INSERT INTO vectors (id, vector, raw_text, model_data)
-                          VALUES (?, ?, ?, ?)''', (id, np.tobytes(np_vector), raw_text, np.tobytes(model_data)))
+                        VALUES (?, ?, ?, ?)''', (id, np_vector.tobytes(), raw_text, sqlite3.Binary(model_data_bytes)))
         self.db.commit()
+        self.index.build(10)  # Build the index after adding all items
+
+    def _resize_vector(self, vector):
+        if len(vector[0]) > self.index_dim:
+            return vector[:, :self.index_dim]  # Truncate
+        else:
+            return np.pad(vector, ((0, 0), (0, self.index_dim - len(vector[0]))), mode='constant')  # Pad
+
 
     def search(self, query_text):
         np_query_vector = self.vectorizer.fit_transform([query_text]).toarray().astype(np.float32)
-        distances, indices = self.index.search(np_query_vector, FAISS_JDIFF_1000)
+        indices = self.index.search(np_query_vector, 10)
         results = []
         for i in indices:
             cursor = self.db.cursor()
-            cursor.execute('''SELECT model_data FROM vectors WHERE id = ?''', (i[0],))
-            model_data = cursor.fetchone()[0]
-            results.append(model_data)
-        return results[:10]
-    
+            cursor.execute('''SELECT model_data FROM vectors WHERE id = ?''', (i,))
+            row = cursor.fetchone()
+            results.append(row[0])
+        return results
+
     def has_records(self):
         cursor = self.db.cursor()
         cursor.execute("SELECT COUNT(*) FROM vectors")

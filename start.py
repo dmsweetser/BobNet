@@ -32,25 +32,30 @@ if __name__ == "__main__":
     
     if len(os.listdir(ingest_dir)) > 0:
         for file in os.listdir(ingest_dir):
-            with open(file, 'r') as ingest_file:
+            full_file_path = os.path.join(ingest_dir, file)
+            with open(full_file_path, 'r') as ingest_file:
                 training_text = ingest_file.read()
+                new_bob = Bob(config=config, training_data=training_text)
                 vector_store.add_vector(
                     training_text,
-                    Bob(config=config, training_data=training_text, model_dir=model_dir).save_bob())
-        
-    if len(os.listdir(import_dir)) > 0:
-        for file in os.listdir(import_dir):
-            with open(file, 'r') as import_file:
-                new_bob = Bob(import_file)
-                vector_store.add_vector(
-                    new_bob.training_data,
                     new_bob.save_bob())
                 
                 current_ticks = int(time.time())
                 file_name = f"{str(current_ticks)}.bob"
                 full_path = os.path.join(share_dir, file_name)
                 with open(full_path, "w") as share_file:
-                    file.write(json.dumps(new_bob.save_bob(), indent=4))
+                    share_file.write(json.dumps(new_bob.save_bob(), indent=4))
+        
+    if len(os.listdir(import_dir)) > 0:
+        for file in os.listdir(import_dir):
+            if '.bob' not in file.name:
+                continue
+            full_file_path = os.path.join(import_dir, file)
+            with open(full_file_path, 'r') as import_file:
+                new_bob = Bob(import_file)
+                vector_store.add_vector(
+                    new_bob.training_data,
+                    new_bob.save_bob())
 
     if len(sys.argv) > 1:
         output = sys.argv[1]

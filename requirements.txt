@@ -1,4 +1,4 @@
 tensorflow
-faiss-cpu
 numpy
 scikit-learn
+annoy

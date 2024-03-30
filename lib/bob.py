@@ -19,7 +19,7 @@ import io
 import tempfile
 
 class Bob:
-    def __init__(self, existing_model_path = "", config = "", training_data = "", model_dir=""):
+    def __init__(self, existing_model_path = "", config = "", training_data = ""):
 
         if existing_model_path != "":
             self.load_bob(existing_model_path)
@@ -27,12 +27,11 @@ class Bob:
             self.end_token = '[e]'
             self.delimiter = '[m]'
             self.training_data = training_data
-            self.model_dir = model_dir
             self.populate_from_config(config)
             self.tokenizer = None
             self.model = None
             self._build_bob(training_data)
-            self.save_bob(model_dir)
+            self.save_bob()
         
     def populate_from_config(self, config):
         self.config = config
