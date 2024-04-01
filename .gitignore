@@ -2,7 +2,7 @@ venv/
 share/*.bob
 __pycache__/
 *.pyc
-vector_store.db
+*.db
 *.bin
 ingest/archive/*
 !ingest/archive/README.txt

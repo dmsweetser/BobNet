@@ -1,19 +1,17 @@
 import sqlite3
 import numpy as np
 from gensim.models import KeyedVectors
-from annoy import AnnoyIndex
 import json
 import nltk
 nltk.download('punkt')
 
 class VectorStore:
-    def __init__(self):
+    def __init__(self, file_name = 'vector_store.db'):
         self.index_dim = 300
-        self.db = sqlite3.connect('vector_store.db')
+        self.db = sqlite3.connect(file_name)
         self.create_table()
         # Download from https://github.com/mmihaltz/word2vec-GoogleNews-vectors
         self.word2vec_model = KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin',  limit=500000, binary=True) 
-        self.index = self.init_index()
 
     def create_table(self):
         cursor = self.db.cursor()
@@ -37,19 +35,14 @@ class VectorStore:
         else:
             return  # Skip if no word vectors found
 
-        id = self.index.get_n_items()
-        self.index.add_item(id, vector)
         cursor = self.db.cursor()
 
         # Convert model_data to bytes
         model_data_bytes = json.dumps(model_data).encode('utf-8')
 
-        cursor.execute('''INSERT INTO vectors (id, vector, raw_text, model_data)
-                        VALUES (?, ?, ?, ?)''', (id, vector.tobytes(), raw_text, sqlite3.Binary(model_data_bytes)))
+        cursor.execute('''INSERT INTO vectors (vector, raw_text, model_data)
+                        VALUES (?, ?, ?)''', (vector.tobytes(), raw_text, sqlite3.Binary(model_data_bytes)))
         self.db.commit()
-        self.index.drop
-        self.index.build(10)  # Build the index after adding all items
-
 
     def search(self, query_text):
         # Vectorize the query text using Word2Vec
@@ -65,13 +58,29 @@ class VectorStore:
         else:
             return []
 
-        indices = self.index.get_nns_by_vector(query_vector, 10)
+        cursor = self.db.cursor()
+        cursor.execute('''SELECT id, vector FROM vectors''')
+        rows = cursor.fetchall()
+
+        # Calculate cosine similarity with each vector
+        similarities = []
+        for row in rows:
+            vector_bytes = row[1]
+            vector = np.frombuffer(vector_bytes, dtype=np.float32)
+            similarity = np.dot(query_vector, vector) / (np.linalg.norm(query_vector) * np.linalg.norm(vector))
+            similarities.append((row[0], similarity))
+
+        # Sort by similarity
+        similarities.sort(key=lambda x: x[1], reverse=True)
+
+        # Retrieve model_data for top results
         results = []
-        for i in indices:
-            cursor = self.db.cursor()
-            cursor.execute('''SELECT model_data FROM vectors WHERE id = ?''', (i,))
+        for i in range(min(2, len(similarities))):
+            vector_id = similarities[i][0]
+            cursor.execute('''SELECT model_data FROM vectors WHERE id = ?''', (vector_id,))
             row = cursor.fetchone()
             results.append(row[0])
+
         return results
 
     def has_records(self):

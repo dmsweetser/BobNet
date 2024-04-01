@@ -49,13 +49,10 @@ class Bob:
         
     def infer(self, seed_text):
         try:
+            
             model = self.model
             tokenizer = self.tokenizer
             sequence_length = self.context_length
-
-            # Preprocess seed text
-            seed_text = seed_text.translate(str.maketrans('', '', string.punctuation))
-            generated_text = seed_text.lower()
 
             result = ""
 
@@ -72,7 +69,9 @@ class Bob:
 
             # Get the probability of the selected token
             selected_token_prob = predicted_probs[max_prob_index]
+            print(f"Predicted Token: {result}; Probability: {selected_token_prob}")
             return result, selected_token_prob
+        
         except Exception as e:
             print(e)
             return "", 0
@@ -113,7 +112,7 @@ class Bob:
 
     def _preprocess_data(self, text_data_arr):
         
-        tokenizer = Tokenizer(lower=True, filters='')
+        tokenizer = Tokenizer(lower=False, filters='')
         tokenizer.fit_on_texts(text_data_arr)
         sequences = tokenizer.texts_to_sequences(text_data_arr)
 
