@@ -9,13 +9,14 @@ ingest_dir = "ingest"
 ingest_archive_dir = "ingest\\archive\\"
 import_dir = "import"
 share_dir = "share"
+max_results = 10
 
 config = {
     "context_length": 256,
     "embedding_dim": 64,
     "lstm_units": 64, 
-    "hidden_dim": 64,
-    "epochs": 60,
+    "hidden_dim": 32768,
+    "epochs": 40,
     "batch_size": 64,
     "learning_rate": 0.015,
     "dropout": 0.2,
@@ -25,7 +26,7 @@ config = {
 }
 
 # Use this for doing clean repeated tests
-test_mode = True
+test_mode = False
 
 if test_mode:
     archive_ingested_files = False
@@ -85,7 +86,7 @@ if __name__ == "__main__":
         
         bob_net = []
         
-        bob_data = vector_store.search(output)
+        bob_data = vector_store.search(output, max_results)
         
         for entry in bob_data:
             bob = Bob()

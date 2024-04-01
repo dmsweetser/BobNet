@@ -44,7 +44,7 @@ class VectorStore:
                         VALUES (?, ?, ?)''', (vector.tobytes(), raw_text, sqlite3.Binary(model_data_bytes)))
         self.db.commit()
 
-    def search(self, query_text):
+    def search(self, query_text, max_results=10):
         # Vectorize the query text using Word2Vec
         words = nltk.word_tokenize(query_text.lower())
         query_vector = np.zeros(self.index_dim, dtype=np.float32)
@@ -75,7 +75,7 @@ class VectorStore:
 
         # Retrieve model_data for top results
         results = []
-        for i in range(min(2, len(similarities))):
+        for i in range(min(max_results, len(similarities))):
             vector_id = similarities[i][0]
             cursor.execute('''SELECT model_data FROM vectors WHERE id = ?''', (vector_id,))
             row = cursor.fetchone()
