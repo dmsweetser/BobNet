@@ -13,7 +13,7 @@ max_results = 10
 
 config = {
     "context_length": 256,
-    "embedding_dim": 64,
+    "embedding_dim": 512,
     "lstm_units": 64, 
     "hidden_dim": 32768,
     "epochs": 40,
@@ -26,7 +26,7 @@ config = {
 }
 
 # Use this for doing clean repeated tests
-test_mode = False
+test_mode = True
 
 if test_mode:
     archive_ingested_files = False
@@ -34,7 +34,7 @@ if test_mode:
     current_ticks = int(time.time())
     vector_store_file_name = f"{str(current_ticks)}.db"
     vector_store = VectorStore(vector_store_file_name)    
-    sys.argv.append("What is your name?")
+    sys.argv.append("What is 2 + 2?")
 else:
     archive_ingested_files = True
     generate_bob_for_sharing = True
