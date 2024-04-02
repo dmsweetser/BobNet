@@ -58,11 +58,24 @@ class Bob:
 
             token_list = tokenizer.texts_to_sequences([seed_text])[0]
             
-            # Count unknown tokens
-            num_unknown_tokens = 1
-            for token in token_list:
-                if token == 0:
-                    num_unknown_tokens += 1
+            # Convert tokenized text back to original words
+            original_tokens = tokenizer.index_word
+
+            # Reconstruct text from tokens
+            reconstructed_text = ' '.join([original_tokens.get(token, '<UNK>') for token in token_list])
+
+            # Find unrecognized parts
+            unrecognized_parts = []
+            current_part = ''
+            for char, token in zip(seed_text, reconstructed_text):
+                if char == token:
+                    current_part += char
+                else:
+                    if current_part:
+                        unrecognized_parts.append(current_part)
+                        current_part = ''
+            if current_part:
+                unrecognized_parts.append(current_part)            
             
             token_list = pad_sequences([token_list], maxlen=sequence_length, padding="pre")
 
@@ -77,7 +90,7 @@ class Bob:
             # Get the probability of the selected token
             selected_token_prob = predicted_probs[max_prob_index]
             
-            selected_token_prob = selected_token_prob / num_unknown_tokens
+            selected_token_prob = selected_token_prob / (len(unrecognized_parts) + 1)
             
             print(f"Predicted Token: {result}; Probability: {selected_token_prob}")
             return result, selected_token_prob
