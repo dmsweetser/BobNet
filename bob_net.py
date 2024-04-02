@@ -13,7 +13,7 @@ max_results = 10
 
 config = {
     "context_length": 256,
-    "embedding_dim": 512,
+    "embedding_dim": 64,
     "lstm_units": 64, 
     "hidden_dim": 32768,
     "epochs": 40,

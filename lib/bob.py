@@ -57,6 +57,13 @@ class Bob:
             result = ""
 
             token_list = tokenizer.texts_to_sequences([seed_text])[0]
+            
+            # Count unknown tokens
+            num_unknown_tokens = 1
+            for token in token_list:
+                if token == 0:
+                    num_unknown_tokens += 1
+            
             token_list = pad_sequences([token_list], maxlen=sequence_length, padding="pre")
 
             predicted_probs = model.predict(token_list, verbose=0)[0]
@@ -69,6 +76,9 @@ class Bob:
 
             # Get the probability of the selected token
             selected_token_prob = predicted_probs[max_prob_index]
+            
+            selected_token_prob = selected_token_prob / num_unknown_tokens
+            
             print(f"Predicted Token: {result}; Probability: {selected_token_prob}")
             return result, selected_token_prob
         
