@@ -13,10 +13,10 @@ max_results = 10
 
 config = {
     "context_length": 256,
-    "embedding_dim": 4096,
+    "embedding_dim": 64,
     "lstm_units": 64, 
-    "hidden_dim": 100000,
-    "epochs": 40,
+    "hidden_dim": 30000,
+    "epochs": 50,
     "batch_size": 64,
     "learning_rate": 0.015,
     "dropout": 0.2,
@@ -26,7 +26,7 @@ config = {
 }
 
 # Use this for doing clean repeated tests
-test_mode = True
+test_mode = False
 
 if test_mode:
     archive_ingested_files = False
