@@ -4,5 +4,7 @@ __pycache__/
 *.pyc
 *.db
 *.bin
+ingest/*
+!ingest/training_data_*.txt
 ingest/archive/*
 !ingest/archive/README.txt
