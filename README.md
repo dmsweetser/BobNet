@@ -35,7 +35,7 @@ Take the following steps to start using BobNet:
     1. Example: "What is 2 + 2?"
     2. BobNet will do a vector search to find which internal language models best fit your question.
     3. BobNet will use each identified model to do inference, providing only the most confident result.
-    4. Models will be penalized accordingly to avoid results that are overconfident but way wrong.
+    4. Models will be penalized to the degree to which they are unfamiliar with any part of the question text.
 5. You can share *.bob files with other people
     1. Each file represents the work output of training on a single text input file
     2. You can import *.bob files shared by others by putting them in the "import" subdirectory
