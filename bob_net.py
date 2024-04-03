@@ -4,6 +4,7 @@ import argparse
 from lib.bob import *
 import shutil
 from lib.vector_store import VectorStore
+import codecs
 
 ingest_dir = "ingest"
 ingest_archive_dir = "ingest\\archive\\"
@@ -52,7 +53,7 @@ if __name__ == "__main__":
             if "archive" in file:
                 continue
             full_file_path = os.path.join(ingest_dir, file)
-            with open(full_file_path, 'r') as ingest_file:
+            with codecs.open(full_file_path, 'rU', encoding='utf-8') as ingest_file:
                 training_text = ingest_file.read()
                 new_bob = Bob(config=config, training_data=training_text)
                 vector_store.add_vector(
