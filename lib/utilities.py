@@ -13,10 +13,11 @@ def process_training_text(training_text, config, generate_bob_for_sharing, share
         if generate_bob_for_sharing:
             current_ticks = int(time.time())
             file_name = f"{str(current_ticks)}.bob"
-            full_path = os.path.join(share_dir, file_name)
-            with open(full_path, "w") as share_file:
+            share_full_path = os.path.join(share_dir, file_name)
+            with open(share_full_path, "w") as share_file:
                 share_file.write(json.dumps(new_bob.save_bob(), indent=4))
-            with open(full_path, "w") as import_file:
+            import_full_path = os.path.join(import_dir, file_name)
+            with open(import_full_path, "w") as import_file:
                 import_file.write(json.dumps(new_bob.save_bob(), indent=4))
     except Exception as e:
         print(f"Exception encountered when processing training data:\n{training_text}\n\nException:\n{str(e)}")

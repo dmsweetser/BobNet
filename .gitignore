@@ -8,3 +8,5 @@ ingest/*
 !ingest/training_data_*.txt
 ingest/archive/*
 !ingest/archive/README.txt
+import/*
+!import/README.txt
