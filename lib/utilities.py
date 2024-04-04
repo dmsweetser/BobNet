@@ -28,6 +28,7 @@ def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,imp
         training_text_raw = ingest_file.read()
         split_training_text = string_chunks(training_text_raw, config["context_length"] * 50)
         lengths = [len(s) for s in split_training_text]
+        print(f"Models to be generated: {len(split_training_text)}")
         print(f"Total text length for all chunks: {lengths}")
         partial_process = partial(process_training_text, config=config,
                                    generate_bob_for_sharing=generate_bob_for_sharing, share_dir=share_dir, import_dir=import_dir)
