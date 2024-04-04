@@ -32,7 +32,7 @@ def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,imp
         print(f"Total text length for all chunks: {sum(lengths)}")
         partial_process = partial(process_training_text, config=config,
                                    generate_bob_for_sharing=generate_bob_for_sharing, share_dir=share_dir, import_dir=import_dir)
-        num_cores = round(multiprocessing.cpu_count() // 3)
+        num_cores = round(multiprocessing.cpu_count() // 4)
         print(f"Total used cores: {num_cores}")
         with Pool(processes=num_cores) as pool:
             pool.map(partial_process, split_training_text)
