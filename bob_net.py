@@ -54,20 +54,7 @@ if __name__ == "__main__":
             if "archive" in file:
                 continue
             full_file_path = os.path.join(ingest_dir, file)
-            with codecs.open(full_file_path, 'rU', encoding='utf-8') as ingest_file:
-                training_text_raw = ingest_file.read()                
-                split_training_text = string_chunks(training_text_raw, config["context_length"])
-                for training_text in split_training_text:                
-                    new_bob = Bob(config=config, training_data=training_text)
-                    vector_store.add_vector(
-                        training_text,
-                        new_bob.save_bob())                    
-                    if generate_bob_for_sharing:
-                        current_ticks = int(time.time())
-                        file_name = f"{str(current_ticks)}.bob"
-                        full_path = os.path.join(share_dir, file_name)
-                        with open(full_path, "w") as share_file:
-                            share_file.write(json.dumps(new_bob.save_bob(), indent=4))
+            process_file(full_file_path, config, generate_bob_for_sharing, share_dir, import_dir)
             if archive_ingested_files:
                 shutil.move(full_file_path, os.path.join(ingest_archive_dir,file))
         
