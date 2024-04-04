@@ -25,7 +25,7 @@ def process_training_text(training_text, config, generate_bob_for_sharing, share
 def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,import_dir):
     with codecs.open(full_file_path, 'rU', encoding='utf-8') as ingest_file:
         training_text_raw = ingest_file.read()
-        split_training_text = string_chunks(training_text_raw, config["context_length"])
+        split_training_text = string_chunks(training_text_raw, config["context_length"] * 200)
         partial_process = partial(process_training_text, config=config,
                                    generate_bob_for_sharing=generate_bob_for_sharing, share_dir=share_dir, import_dir=import_dir)
         with Pool() as pool:
