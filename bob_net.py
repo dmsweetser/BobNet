@@ -14,7 +14,7 @@ share_dir = "share"
 max_results = 10
 
 config = {
-    "context_length": 1024,
+    "context_length": 256,
     "embedding_dim": 64,
     "lstm_units": 64, 
     "hidden_dim": 500000,
