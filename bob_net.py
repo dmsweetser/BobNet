@@ -14,10 +14,10 @@ share_dir = "share"
 max_results = 10
 
 config = {
-    "context_length": 256,
+    "context_length": 1024,
     "embedding_dim": 64,
     "lstm_units": 64, 
-    "hidden_dim": 20000,
+    "hidden_dim": 500000,
     "epochs": 40,
     "batch_size": 64,
     "learning_rate": 0.015,
@@ -68,6 +68,7 @@ if __name__ == "__main__":
                 vector_store.add_vector(
                     new_bob.training_data,
                     new_bob.save_bob())
+            os.remove(full_file_path)
 
     if len(sys.argv) > 1:
         output = sys.argv[1]
