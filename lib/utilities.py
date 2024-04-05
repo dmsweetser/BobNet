@@ -23,16 +23,19 @@ def process_training_text(training_text, config, generate_bob_for_sharing, share
     except Exception as e:
         print(f"Exception encountered when processing training data:\n{training_text}\n\nException:\n{str(e)}")
 
-def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,import_dir):
+def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,import_dir, process_as_chunks = False):
     with codecs.open(full_file_path, 'rU', encoding='utf-8') as ingest_file:
         training_text_raw = ingest_file.read()
-        split_training_text = string_chunks(training_text_raw, config["context_length"] * 50)
-        lengths = [len(s) for s in split_training_text]
-        print(f"Models to be generated: {len(split_training_text)}")
-        print(f"Total text length for all chunks: {sum(lengths)}")
-        partial_process = partial(process_training_text, config=config,
-                                   generate_bob_for_sharing=generate_bob_for_sharing, share_dir=share_dir, import_dir=import_dir)
-        num_cores = round(multiprocessing.cpu_count() // 4)
-        print(f"Total used cores: {num_cores}")
-        with Pool(processes=num_cores) as pool:
-            pool.map(partial_process, split_training_text)
+        if process_as_chunks and len(training_text_raw) > config["context_length"] * 50:
+            split_training_text = string_chunks(training_text_raw, config["context_length"] * 50)
+            lengths = [len(s) for s in split_training_text]
+            print(f"Models to be generated: {len(split_training_text)}")
+            print(f"Total text length for all chunks: {sum(lengths)}")
+            partial_process = partial(process_training_text, config=config,
+                                    generate_bob_for_sharing=generate_bob_for_sharing, share_dir=share_dir, import_dir=import_dir)
+            num_cores = round(multiprocessing.cpu_count() // 4)
+            print(f"Total used cores: {num_cores}")
+            with Pool(processes=num_cores) as pool:
+                pool.map(partial_process, split_training_text)
+        else:
+            process_training_text(training_text_raw, config, generate_bob_for_sharing, share_dir, import_dir)

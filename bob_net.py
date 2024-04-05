@@ -64,7 +64,7 @@ if __name__ == "__main__":
                 continue
             full_file_path = os.path.join(import_dir, file)
             with open(full_file_path, 'r') as import_file:
-                new_bob = Bob(import_file)
+                new_bob = Bob(import_file.read())
                 vector_store.add_vector(
                     new_bob.training_data,
                     new_bob.save_bob())
