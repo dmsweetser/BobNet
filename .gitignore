@@ -6,6 +6,7 @@ __pycache__/
 *.bin
 ingest/*
 !ingest/training_data_*.txt
+!ingest/Blueberry.txt
 ingest/archive/*
 !ingest/archive/README.txt
 import/*
