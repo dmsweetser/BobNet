@@ -166,7 +166,7 @@ class Bob:
             "model": model_base64,
             "tokenizer": tokenizer_base64,
             "config": self.config,
-            "training_data": self.training_data
+            "training_data": json.dumps(self.training_data, ensure_ascii=False)
         }
 
         return json_data

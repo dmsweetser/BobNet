@@ -3,7 +3,6 @@ import numpy as np
 from gensim.models import KeyedVectors
 import json
 import nltk
-nltk.download('punkt')
 
 class VectorStore:
     def __init__(self, file_name = 'vector_store.db'):

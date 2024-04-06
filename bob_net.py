@@ -14,10 +14,10 @@ share_dir = "share"
 max_results = 10
 
 config = {
-    "context_length": 256,
+    "context_length": 512,
     "embedding_dim": 4096,
     "lstm_units": 64, 
-    "hidden_dim": 8192,
+    "hidden_dim": 4096,
     "epochs": 40,
     "batch_size": 64,
     "learning_rate": 0.015,
@@ -36,7 +36,7 @@ if test_mode:
     current_ticks = int(time.time())
     vector_store_file_name = f"{str(current_ticks)}.db"
     vector_store = VectorStore(vector_store_file_name)    
-    sys.argv.append("What is 2 + 2?")
+    sys.argv.append("What are blueberries?")
 else:
     archive_ingested_files = True
     generate_bob_for_sharing = True
