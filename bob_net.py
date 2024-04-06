@@ -17,7 +17,7 @@ config = {
     "context_length": 256,
     "embedding_dim": 4096,
     "lstm_units": 64, 
-    "hidden_dim": 20000,
+    "hidden_dim": 8192,
     "epochs": 40,
     "batch_size": 64,
     "learning_rate": 0.015,
@@ -28,11 +28,11 @@ config = {
 }
 
 # Use this for doing clean repeated tests
-test_mode = False
+test_mode = True
 
 if test_mode:
     archive_ingested_files = False
-    generate_bob_for_sharing = False
+    generate_bob_for_sharing = True
     current_ticks = int(time.time())
     vector_store_file_name = f"{str(current_ticks)}.db"
     vector_store = VectorStore(vector_store_file_name)    
