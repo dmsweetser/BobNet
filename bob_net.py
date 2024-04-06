@@ -17,7 +17,7 @@ config = {
     "context_length": 256,
     "embedding_dim": 64,
     "lstm_units": 64, 
-    "hidden_dim": 500000,
+    "hidden_dim": 20000,
     "epochs": 40,
     "batch_size": 64,
     "learning_rate": 0.015,
