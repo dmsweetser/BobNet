@@ -5,7 +5,7 @@ from functools import partial
 from lib.bob import *
 
 def string_chunks(string, chunk_size):
-    step = round(chunk_size * 0.75)
+    step = round(chunk_size * 0.97)
     return [string[i:i + chunk_size] for i in range(0, len(string) - chunk_size, step)]
 
 def process_training_text(training_text, config, generate_bob_for_sharing, share_dir, import_dir):

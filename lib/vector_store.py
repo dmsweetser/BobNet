@@ -20,7 +20,7 @@ class VectorStore:
                             raw_text TEXT,
                             model_data BLOB)''')
 
-    def add_vector(self, raw_text, model_data):
+    def add_vector(self, raw_text, model_data): 
         # Vectorize the text using Word2Vec
         words = nltk.word_tokenize(raw_text.lower())  # Tokenize the text
         vector = np.zeros((self.index_dim,), dtype=np.float32)  # Initialize vector with shape (300,)

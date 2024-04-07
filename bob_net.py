@@ -11,7 +11,7 @@ ingest_dir = "ingest"
 ingest_archive_dir = "ingest\\archive\\"
 import_dir = "import"
 share_dir = "share"
-max_results = 10
+max_results = 3
 
 config = {
     "context_length": 512,
