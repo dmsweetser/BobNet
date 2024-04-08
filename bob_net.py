@@ -14,7 +14,7 @@ share_dir = "share"
 max_results = 3
 
 config = {
-    "context_length": 512,
+    "context_length": 2048,
     "embedding_dim": 4096,
     "lstm_units": 64, 
     "hidden_dim": 4096,
@@ -74,6 +74,7 @@ if __name__ == "__main__":
         output = sys.argv[1]
         results = []
         probabilities = []
+        previous_result = ""
         
         bob_net = []
         
