@@ -8,6 +8,8 @@ ingest/*
 !ingest/training_data_*.txt
 !ingest/Blueberry.txt
 ingest/archive/*
+!ingest/archive/training_data_*.txt
+!ingest/archive/Blueberry.txt
 !ingest/archive/README.txt
 import/*
 !import/README.txt
