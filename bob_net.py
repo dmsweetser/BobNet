@@ -28,7 +28,7 @@ config = {
 }
 
 # Use this for doing clean repeated tests
-test_mode = True
+test_mode = False
 
 if test_mode:
     archive_ingested_files = False
@@ -85,23 +85,31 @@ if __name__ == "__main__":
             bob_net.append(bob)
         
         while True:
-            
             for bob in bob_net:                
                 result, probability = bob.infer(output)
                 results.append(result)
                 probabilities.append(probability)
-                
-            max_probability_index = probabilities.index(max(probabilities))
-            matching_result = results[max_probability_index]    
-            
+
+                if result == previous_result:
+                    duplicate_count += 1
+                else:
+                    duplicate_count = 0
+
+                if duplicate_count >= 3:
+                    print("Duplicate result detected three times in a row. Exiting loop.")
+                    output = output[:-len(previous_result)]
+                    break
+
+                previous_result = result
+
+            matching_result = results[0]
+
             output += " " + matching_result
-            
+
             print(output)
-            
+
             if "[e]" in output:
                 break
-            
+
             results = []
             probabilities = []
-    
-    

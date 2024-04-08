@@ -77,10 +77,6 @@ class Bob:
             # Get the probability of the selected token
             selected_token_prob = predicted_probs[max_prob_index]
             
-            # size_modifier = (len(seed_text) / len(tokenizer.word_index))
-            # familiarity_modifier = (len(seed_text) - len(reconstructed_text)) + 1            
-            # selected_token_prob = selected_token_prob / size_modifier / (familiarity_modifier * 10)
-            
             familiarity_modifier = (len(seed_text) - len(reconstructed_text)) + 1            
             selected_token_prob = selected_token_prob / (familiarity_modifier * 10)
             
