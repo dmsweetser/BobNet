@@ -5,30 +5,34 @@ from lib.bob import *
 from lib.utilities import *
 import shutil
 from lib.vector_store import VectorStore
+from lib.config_manager import *
 import codecs
 
-ingest_dir = "ingest"
-ingest_archive_dir = "ingest\\archive\\"
-import_dir = "import"
-share_dir = "share"
-max_results = 10
+# Load existing config or set defaults
+load_config()
 
-config = {
-    "context_length": 256,
-    "embedding_dim": 4096,
-    "lstm_units": 64, 
-    "hidden_dim": 20000,
-    "epochs": 40,
-    "batch_size": 64,
-    "learning_rate": 0.015,
-    "dropout": 0.2,
-    "recurrent_dropout": 0.2,
-    "temperature": 1.0,
-    "repetition_penalty": 1.0
+ingest_dir = get_config("ingest_dir")
+ingest_archive_dir = get_config("ingest_archive_dir")
+import_dir = get_config("import_dir")
+share_dir = get_config("share_dir")
+max_results = get_config("max_results")
+
+model_config = {
+    "context_length": get_config("context_length"),
+    "embedding_dim": get_config("embedding_dim"),
+    "lstm_units": get_config("lstm_units"), 
+    "hidden_dim": get_config("hidden_dim"),
+    "epochs": get_config("epochs"),
+    "batch_size": get_config("batch_size"),
+    "learning_rate": get_config("learning_rate"),
+    "dropout": get_config("dropout"),
+    "recurrent_dropout": get_config("recurrent_dropout"),
+    "temperature": get_config("temperature"),
+    "repetition_penalty": get_config("repetition_penalty")
 }
 
 # Use this for doing clean repeated tests
-test_mode = False
+test_mode = get_config("test_mode")
 
 if test_mode:
     archive_ingested_files = False

@@ -1,0 +1,20 @@
+{
+    "ingest_dir": "ingest",
+    "ingest_archive_dir": "ingest\\archive\\",
+    "import_dir": "import",
+    "share_dir": "share",
+    "max_results": 10,
+    "test_mode": false,
+    "pet_store_host": "127.0.0.1:6458",    
+    "context_length": 256,
+    "embedding_dim": 4096,
+    "lstm_units": 64, 
+    "hidden_dim": 20000,
+    "epochs": 40,
+    "batch_size": 64,
+    "learning_rate": 0.015,
+    "dropout": 0.2,
+    "recurrent_dropout": 0.2,
+    "temperature": 1.0,
+    "repetition_penalty": 1.0
+}
