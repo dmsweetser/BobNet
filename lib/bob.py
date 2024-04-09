@@ -93,7 +93,7 @@ class Bob:
         embedding_params = vocab_size * embedding_dim
         lstm1_params = 4 * ((embedding_dim + lstm_units) * lstm_units)
         lstm2_params = 4 * ((lstm_units + lstm_units) * lstm_units)
-        dense1_params = (lstm_units * hidden_dim) + hidden_dim
+        dense1_params = ((lstm_units * hidden_dim) + hidden_dim) * 28
         dense2_params = (hidden_dim * vocab_size) + vocab_size
         output_dense_params = (hidden_dim * vocab_size) + vocab_size
 
@@ -106,7 +106,8 @@ class Bob:
         pipeline = Embedding(vocab_size, embedding_dim)(inputs)        
         pipeline = LSTM(lstm_units, dropout=self.dropout, recurrent_dropout=self.recurrent_dropout, return_sequences=True)(pipeline)
         pipeline = LSTM(lstm_units, dropout=self.dropout, recurrent_dropout=self.recurrent_dropout)(pipeline)
-        pipeline = Dense(hidden_dim, activation='relu')(pipeline)
+        for layer in range(1,29,1):
+            pipeline = Dense(hidden_dim, activation='relu')(pipeline)
         pipeline = Dense(vocab_size)(pipeline)  # No activation here
 
         # Apply softmax activation here
