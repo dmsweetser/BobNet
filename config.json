@@ -10,7 +10,7 @@
     "context_length": 256,
     "embedding_dim": 4096,
     "lstm_units": 64, 
-    "hidden_dim": 50000,
+    "hidden_dim": 4096,
     "epochs": 40,
     "batch_size": 64,
     "learning_rate": 0.015,
