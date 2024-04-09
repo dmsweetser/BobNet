@@ -35,7 +35,8 @@ def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,imp
                                     generate_bob_for_sharing=generate_bob_for_sharing, share_dir=share_dir, import_dir=import_dir)
             num_cores = round(multiprocessing.cpu_count() // 2)
             print(f"Total used cores: {num_cores}")
-            with Pool(processes=num_cores) as pool:
+            # Temporarily set to 1 instead of num_cores so I can still use my computer
+            with Pool(processes=1) as pool:
                 pool.map(partial_process, split_training_text)
         else:
             process_training_text(training_text_raw, config, generate_bob_for_sharing, share_dir, import_dir)
