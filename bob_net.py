@@ -58,7 +58,7 @@ if __name__ == "__main__":
             if "archive" in file:
                 continue
             full_file_path = os.path.join(ingest_dir, file)
-            process_file(full_file_path, config, generate_bob_for_sharing, share_dir, import_dir)
+            process_file(full_file_path, model_config, generate_bob_for_sharing, share_dir, import_dir)
             if archive_ingested_files:
                 shutil.move(full_file_path, os.path.join(ingest_archive_dir,file))
         
