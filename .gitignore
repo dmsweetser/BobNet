@@ -13,3 +13,4 @@ ingest/archive/*
 !ingest/archive/README.txt
 import/*
 !import/README.txt
+user_config.json
