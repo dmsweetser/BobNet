@@ -23,7 +23,7 @@ def process_training_text(training_text, config, generate_bob_for_sharing, share
     except Exception as e:
         print(f"Exception encountered when processing training data:\n{training_text}\n\nException:\n{str(e)}")
 
-def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,import_dir, process_as_chunks = True):
+def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,import_dir, total_cores, process_as_chunks = True):
     with codecs.open(full_file_path, 'rU', encoding='utf-8') as ingest_file:
         training_text_raw = ingest_file.read()
         if process_as_chunks and len(training_text_raw) > config["context_length"]:
@@ -33,10 +33,7 @@ def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,imp
             print(f"Total text length for all chunks: {sum(lengths)}")
             partial_process = partial(process_training_text, config=config,
                                     generate_bob_for_sharing=generate_bob_for_sharing, share_dir=share_dir, import_dir=import_dir)
-            num_cores = round(multiprocessing.cpu_count() // 2)
-            print(f"Total used cores: {num_cores}")
-            # Temporarily set to 1 instead of num_cores so I can still use my computer
-            with Pool(processes=1) as pool:
+            with Pool(processes=total_cores) as pool:
                 pool.map(partial_process, split_training_text)
         else:
             process_training_text(training_text_raw, config, generate_bob_for_sharing, share_dir, import_dir)

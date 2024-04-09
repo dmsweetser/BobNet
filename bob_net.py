@@ -16,6 +16,7 @@ ingest_archive_dir = get_config("ingest_archive_dir")
 import_dir = get_config("import_dir")
 share_dir = get_config("share_dir")
 max_results = get_config("max_results")
+total_cores = get_config("total_cores")
 
 model_config = {
     "context_length": get_config("context_length"),
@@ -58,7 +59,7 @@ if __name__ == "__main__":
             if "archive" in file:
                 continue
             full_file_path = os.path.join(ingest_dir, file)
-            process_file(full_file_path, model_config, generate_bob_for_sharing, share_dir, import_dir)
+            process_file(full_file_path, model_config, generate_bob_for_sharing, share_dir, import_dir, total_cores)
             if archive_ingested_files:
                 shutil.move(full_file_path, os.path.join(ingest_archive_dir,file))
         
