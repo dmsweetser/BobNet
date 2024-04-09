@@ -11,13 +11,13 @@ ingest_dir = "ingest"
 ingest_archive_dir = "ingest\\archive\\"
 import_dir = "import"
 share_dir = "share"
-max_results = 3
+max_results = 10
 
 config = {
     "context_length": 256,
     "embedding_dim": 4096,
     "lstm_units": 64, 
-    "hidden_dim": 4096,
+    "hidden_dim": 20000,
     "epochs": 40,
     "batch_size": 64,
     "learning_rate": 0.015,
@@ -75,17 +75,16 @@ if __name__ == "__main__":
         results = []
         probabilities = []
         previous_result = ""
-        
+       
         bob_net = []
-        
         bob_data = vector_store.search(output, max_results)
-        
         for entry in bob_data:
             bob = Bob()
             bob.load_bob(entry)
             bob_net.append(bob)
-        
+       
         while True:
+            
             for bob in bob_net:                
                 result, probability = bob.infer(output)
                 results.append(result)

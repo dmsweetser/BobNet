@@ -191,7 +191,7 @@ class Bob:
             
     def _build_bob(self, input_data):
         text_data_arr = []
-        text_data_arr.append(f"{input_data}{self.end_token}")
+        text_data_arr.append(f"{input_data}")
         input_sequences, output_sequences, vocab_size = self._preprocess_data(text_data_arr)
         self.model = self._create_model(self.context_length, vocab_size, self.embedding_dim, self.lstm_units, self.hidden_dim)
         self._train_model(self.model, input_sequences, output_sequences, self.epochs, self.batch_size)
