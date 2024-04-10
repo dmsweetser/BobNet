@@ -101,7 +101,9 @@ if __name__ == "__main__":
                 previous_result[results[0]] = 1
 
             if previous_result[results[0]] >= 3:
+                output = remove_contiguous_duplicates(output)
                 print("Duplicate result detected three times in a row. Exiting loop.")
+                print(f"Final Output: {output}")
                 break
 
             matching_result = results[0]

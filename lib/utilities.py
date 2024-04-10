@@ -3,6 +3,7 @@ import multiprocessing
 from multiprocessing import Pool
 from functools import partial
 from lib.bob import *
+import re
 
 def string_chunks(string, chunk_size):
     step = round(chunk_size * 0.97)
@@ -37,3 +38,6 @@ def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,imp
                 pool.map(partial_process, split_training_text)
         else:
             process_training_text(training_text_raw, config, generate_bob_for_sharing, share_dir, import_dir)
+            
+def remove_contiguous_duplicates(line):
+    return re.sub(r'(.)\1+', r'\1', line)
