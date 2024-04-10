@@ -79,7 +79,7 @@ if __name__ == "__main__":
         output = sys.argv[1]
         results = []
         probabilities = []
-        previous_result = ""
+        previous_result = {}
        
         bob_net = []
         bob_data = vector_store.search(output, max_results)
@@ -94,18 +94,15 @@ if __name__ == "__main__":
                 result, probability = bob.infer(output)
                 results.append(result)
                 probabilities.append(probability)
+                
+            if results[0] in previous_result:
+                previous_result[results[0]] += 1
+            else:
+                previous_result[results[0]] = 1
 
-                if result == previous_result:
-                    duplicate_count += 1
-                else:
-                    duplicate_count = 0
-
-                if duplicate_count >= 3:
-                    print("Duplicate result detected three times in a row. Exiting loop.")
-                    output = output[:-len(previous_result)]
-                    break
-
-                previous_result = result
+            if previous_result[results[0]] >= 3:
+                print("Duplicate result detected three times in a row. Exiting loop.")
+                break
 
             matching_result = results[0]
 
