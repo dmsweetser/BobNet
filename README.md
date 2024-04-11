@@ -21,7 +21,7 @@ FUTURE WORK
     1. Ability to either interface locally (for example, in a Raspberry Pi cluster on a LAN)
     2. Ability to interface across networks
 2. General optimization and improvement
-    1. It takes 5 minutes per 256 char of text currently to train on a single core of an Intel Xeon E5-2690
+    1. It takes 5 minutes per 256 char of text currently to train on an Intel Xeon E5-2690
     2. It takes ~50MB of storage space per 256 char of text when persisted to a .bob file
 
 ## The Story of Bob
