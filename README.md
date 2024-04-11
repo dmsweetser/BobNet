@@ -1,4 +1,4 @@
-# bobnet
+# BobNet
 BobNet is a modular, portable Large Language Model built in community using consumer-grade hardware. The framework ingests training data and emits sharable "Bob" files that represent itty-bitty >5M Tensorflow language models trained only on one brief text each (represented by a training data file). The same models that are emitted are stored in a local SqliteDB as a vector store.
 
 When you do inference, a vector search is done with your query first, the most appropriate models are retrieved and then the highest-probability result from each round is selected as the next token. It feels like in #ai they are always coming up with fancy new terms I don't understand, so I propose "mixture of Bob" or M.O.B. for short as the name of this design.
