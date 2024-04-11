@@ -16,18 +16,24 @@ def string_chunks(string, chunk_size):
     while total_words > 0:
         end_index = min(start_index + chunk_size, len(string))
         if end_index > start_index:
-            if start_index < len(words) and words[start_index] == string[start_index:start_index + 1]:
-                word = words[start_index]
-                if len(re.sub(r'\s+$', '', word)) + len(string[start_index:end_index]) >= chunk_size:
-                    chunks.append(string[start_index:end_index])
-                    total_words -= 1
-                    start_index = end_index
-                else:
-                    start_index += len(word) + len(re.sub(r'\s+$', '', word))
-            else:
-                chunks.append(string[start_index:])
-                start_index += len(string[start_index:start_index + 1])
+            # Find the nearest space before the end index
+            while end_index < len(string) and string[end_index] != ' ':
+                end_index -= 1
+            
+            # If no space is found, move the end index to the end of the last word in the chunk
+            if end_index == start_index:
+                end_index = min(start_index + chunk_size, len(string))
+                while end_index < len(string) and string[end_index] != ' ':
+                    end_index += 1
+            
+            # Add the chunk if it's not empty
+            if start_index != end_index:
+                chunks.append(string[start_index:end_index])
+                start_index += step  # Move the start index forward by the overlap amount
                 total_words -= 1
+            else:
+                # If no space is found within the chunk size, move forward without overlap
+                start_index += chunk_size
         else:
             chunks.append(string[start_index:])
             break
