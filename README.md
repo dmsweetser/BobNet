@@ -12,7 +12,7 @@ BobNet was created to try and address the following problems I see in the curren
 3. A model built this way contains training data that is not controlled by the consumer.
 4. Communities and individuals must rely on the good favor of large, for-profit corporations rather than building something themselves.
 
-BobNet is built and tested using CPU-only on consumer-grade hardware (currently an HP Z640). Rather than forcing users to acquire more and more VRAM to execute a model, BobNet has a very small resource footprint, relying on storage space as its most limiting resource (cheep!). Every individual .bob file trained on a text is shareable / portable, and a BobNet can be built selectively at the discretion of the user. This means you can include just the contents you want, like general conversation, specialized information for your organization, general facts, etc... but opt-in rather than relying on prompts to protect your users from uninformed responses. Finally, BobNet can be built
+BobNet is built and tested using CPU-only on consumer-grade hardware (currently an HP Z640). Rather than forcing users to acquire more and more VRAM to execute a model, BobNet has a very small resource footprint, relying on storage space as its most limiting resource (cheep!). Every individual .bob file trained on a text is shareable / portable, and a BobNet can be built selectively at the discretion of the user. This means you can include just the contents you want, like general conversation, specialized information for your organization, general facts, etc... but opt-in rather than relying on prompts to protect your users from uninformed responses.
 
 Help build the BobNet! Join the revolution!
 
