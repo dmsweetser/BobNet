@@ -6,8 +6,33 @@ from lib.bob import *
 import re
 
 def string_chunks(string, chunk_size):
-    step = round(chunk_size * 0.97)
-    return [string[i:i + chunk_size] for i in range(0, len(string) - chunk_size, step)]
+    pattern = re.compile(r'\w+\s+')
+    words = re.findall(pattern, string)
+    total_words = len(words)
+    step = round(chunk_size * 0.9)
+
+    start_index = 0
+    chunks = []
+    while total_words > 0:
+        end_index = min(start_index + chunk_size, len(string))
+        if end_index > start_index:
+            if start_index < len(words) and words[start_index] == string[start_index:start_index + 1]:
+                word = words[start_index]
+                if len(re.sub(r'\s+$', '', word)) + len(string[start_index:end_index]) >= chunk_size:
+                    chunks.append(string[start_index:end_index])
+                    total_words -= 1
+                    start_index = end_index
+                else:
+                    start_index += len(word) + len(re.sub(r'\s+$', '', word))
+            else:
+                chunks.append(string[start_index:])
+                start_index += len(string[start_index:start_index + 1])
+                total_words -= 1
+        else:
+            chunks.append(string[start_index:])
+            break
+
+    return chunks
 
 def process_training_text(training_text, config, generate_bob_for_sharing, share_dir, import_dir):
     try:
@@ -39,5 +64,7 @@ def process_file(full_file_path, config, generate_bob_for_sharing, share_dir,imp
         else:
             process_training_text(training_text_raw, config, generate_bob_for_sharing, share_dir, import_dir)
             
-def remove_contiguous_duplicates(line):
-    return re.sub(r'(.)\1+', r'\1', line)
+def remove_duplicates(line):
+    pattern = re.compile(r'(.*)(\s+)(\1+)$')
+    result = re.sub(pattern, r'\1', line)
+    return result
