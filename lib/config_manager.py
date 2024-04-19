@@ -2,9 +2,10 @@ import json
 import os
 import shutil
 
+config_file = "config.json"
+user_config_file = "user_config.json"
+
 def load_config():
-   config_file = "config.json"
-   user_config_file = "user_config.json"
 
    if not os.path.isfile(user_config_file):
        shutil.copy(config_file, user_config_file)
@@ -22,12 +23,6 @@ def load_config():
 
        if missing_keys:
            raise Exception(f"Missing keys in user_config.json: {missing_keys}")
-
-           for key in missing_keys:
-               user_config[key] = config[key]
-
-           with open(user_config_file, 'w') as user_file:
-               json.dump(user_config, user_file, indent=2)
 
        return user_config
 

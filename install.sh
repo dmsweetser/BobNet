@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt-get install ffmpeg
+
 echo "Setting up Python virtual environment..."
 
 # Check if Python is installed

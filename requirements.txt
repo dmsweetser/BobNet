@@ -3,3 +3,7 @@ numpy
 scikit-learn
 gensim
 nltk
+openai-whisper
+gtts
+pyaudio
+wave

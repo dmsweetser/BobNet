@@ -14,3 +14,4 @@ ingest/archive/*
 import/*
 !import/README.txt
 user_config.json
+*.exe

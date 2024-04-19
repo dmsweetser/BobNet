@@ -11,11 +11,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing.text import tokenizer_from_json
 from tensorflow.keras.models import load_model
-import datetime
-import time
-import string
 import base64
-import io
 import tempfile
 
 class Bob:
