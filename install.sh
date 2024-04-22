@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt-get install ffmpeg
+# You will need ffmpeg installed first
 
 echo "Setting up Python virtual environment..."
 
