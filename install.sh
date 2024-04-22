@@ -1,12 +1,16 @@
 #!/bin/bash
 
-# You will need ffmpeg installed first
+# Check if ffmpeg is installed
+if ! command -v ffmpeg &>/dev/null; then
+    echo "Error: ffmpeg is not installed. Please install ffmpeg before running this script."
+    exit 1
+fi
 
 echo "Setting up Python virtual environment..."
 
-# Check if Python is installed
+# Check if Python 3.9 is installed
 if ! command -v python3.9 &>/dev/null; then
-    echo "Error: Python is not installed. Please install Python before running this script."
+    echo "Error: Python 3.9 is not installed. Please install Python 3.9 before running this script."
     exit 1
 fi
 
