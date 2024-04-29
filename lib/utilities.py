@@ -3,6 +3,7 @@ from multiprocessing import Pool
 from functools import partial
 from lib.bob import *
 import re
+import time
 
 def string_chunks(string, chunk_size):
     pattern = re.compile(r'\w+\s+')

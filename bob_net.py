@@ -7,6 +7,7 @@ import shutil
 from lib.vector_store import VectorStore
 from lib.config_manager import *
 import codecs
+import time
 
 class BobNet:
     
