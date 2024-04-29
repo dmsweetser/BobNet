@@ -8,6 +8,7 @@ from bob_net import *
 class TalkToMe:
     
     def __init__(self):
+        load_config()
         self.transcription_model = whisper.load_model("tiny.en")        
         self.bob_net = BobNet()
 
