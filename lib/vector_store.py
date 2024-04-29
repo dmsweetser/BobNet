@@ -3,6 +3,7 @@ import numpy as np
 from gensim.models import KeyedVectors
 import json
 import nltk
+import zlib
 
 class VectorStore:
     def __init__(self, file_name = 'vector_store.db'):
@@ -36,11 +37,12 @@ class VectorStore:
 
         cursor = self.db.cursor()
 
-        # Convert model_data to bytes
-        model_data_bytes = json.dumps(model_data).encode('utf-8')
+        # Compress model_data using zlib
+        compressed_model_data = zlib.compress(json.dumps(model_data).encode('utf-8'))
 
+        # Insert into database with compressed model_data
         cursor.execute('''INSERT INTO vectors (vector, raw_text, model_data)
-                        VALUES (?, ?, ?)''', (vector.tobytes(), raw_text, sqlite3.Binary(model_data_bytes)))
+                        VALUES (?, ?, ?)''', (vector.tobytes(), raw_text, sqlite3.Binary(compressed_model_data)))
         self.db.commit()
 
     def search(self, query_text, max_results=10):
@@ -72,13 +74,14 @@ class VectorStore:
         # Sort by similarity
         similarities.sort(key=lambda x: x[1], reverse=True)
 
-        # Retrieve model_data for top results
+        # Retrieve and decompress model_data for top results
         results = []
         for i in range(min(max_results, len(similarities))):
             vector_id = similarities[i][0]
             cursor.execute('''SELECT model_data FROM vectors WHERE id = ?''', (vector_id,))
             row = cursor.fetchone()
-            results.append(row[0])
+            decompressed_model_data = json.loads(zlib.decompress(row[0]))
+            results.append(decompressed_model_data)
 
         return results
 
