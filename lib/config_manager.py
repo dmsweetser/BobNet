@@ -2,10 +2,10 @@ import json
 import os
 import shutil
 
-config_file = "config.json"
-user_config_file = "user_config.json"
-
 def load_config():
+
+   config_file = "config.json"
+   user_config_file = "user_config.json"
 
    if not os.path.isfile(user_config_file):
        shutil.copy(config_file, user_config_file)
@@ -44,6 +44,10 @@ def get_config(key, default=None):
    return config.get(key, default)
 
 def update_config(key, value):
+   
+   config_file = "config.json"
+   user_config_file = "user_config.json"
+    
    config = load_config()
 
    # Cast the value to the appropriate type if it is numeric
