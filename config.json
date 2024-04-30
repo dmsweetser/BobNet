@@ -1,6 +1,6 @@
 {
     "ingest_dir": "ingest",
-    "ingest_archive_dir": "ingest\\archive\\",
+    "ingest_archive_dir": "archive",
     "import_dir": "import",
     "share_dir": "share",
     "max_results": 10,

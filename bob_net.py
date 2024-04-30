@@ -54,7 +54,7 @@ class BobNet:
 
     def make_dirs(self):
         os.makedirs(self.ingest_dir, exist_ok=True)
-        os.makedirs(self.ingest_archive_dir, exist_ok=True)
+        os.makedirs(os.path.join(self.ingest_dir, self.ingest_archive_dir), exist_ok=True)
         os.makedirs(self.import_dir, exist_ok=True)
         os.makedirs(self.share_dir, exist_ok=True)
         
@@ -74,7 +74,7 @@ class BobNet:
                         self.import_dir,
                         self.total_cores)
                 if self.archive_ingested_files:
-                    shutil.move(self.full_file_path, os.path.join(self.ingest_archive_dir,file))
+                    shutil.move(full_file_path, os.path.join(self.ingest_dir, self.ingest_archive_dir, file))
                    
     def ingest_single_training_text(self, training_data):
         if len(os.listdir(self.ingest_dir)) > 0:
