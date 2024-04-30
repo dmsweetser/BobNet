@@ -5,6 +5,8 @@ import json
 import nltk
 import zlib
 
+nltk.download('punkt')
+
 class VectorStore:
     def __init__(self, file_name = 'vector_store.db'):
         self.index_dim = 300
