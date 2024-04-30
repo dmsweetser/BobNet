@@ -19,7 +19,7 @@ class TalkToMe:
         tts.save(filename + ".mp3")
         os.system("ffplay -autoexit " + filename + ".mp3")
 
-    def record_audio(filename, duration=10):        
+    def record_audio(self, filename, duration=10):        
         CHUNK = 1024
         FORMAT = pyaudio.paInt16
         CHANNELS = 1
@@ -45,7 +45,7 @@ class TalkToMe:
         waveFile.writeframes(b''.join(frames))
         waveFile.close()
 
-    def listen(audio_file):
+    def listen(self, audio_file):
         result = self.transcription_model.transcribe(audio_file, fp16=False, initial_prompt="A user is conversing with a language model named BobNet.")
         return result["text"] if result else None
 
