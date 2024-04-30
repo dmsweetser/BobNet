@@ -12,7 +12,7 @@ class TalkToMe:
         self.transcription_model = whisper.load_model("tiny.en")        
         self.bob_net = BobNet()
 
-    def text_to_speech(text, filename):
+    def text_to_speech(self, text, filename):
         if text == "":
             text = "Sorry - something went wrong."
         tts = gtts.gTTS(text=text, lang='en', tld='com.au')
