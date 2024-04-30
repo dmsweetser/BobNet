@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the path to the virtual environment activation script
-activate_script="venv/Scripts/activate"
+activate_script="venv/bin/activate"
 
 # Display diagnostic information
 echo "--- Diagnostic Information ---"
